@@ -16,45 +16,52 @@
         [string]$Filter=""
     )
 
-    BEGIN{}
+    BEGIN
+    {
+        $QueryParams = @{
+            Resource = "students"
+            Method   = "GET"
+        }
+    }
 
     PROCESS
     {
-        $resource = "students"
-        $method   = "GET"
-
         if($SchoolID)
         {
             foreach($ID in $SchoolID)
             {
-                $r="$resource/$ID"
+                $QueryParams["Resource"] = "students/$ID"
                 try
                 {
-                    $applicant = Invoke-PSiSAMSAPIRequest -Resource $r -Method $method -ErrorAction Stop
+                    $pupil = Invoke-PSiSAMSAPIRequest @QueryParams -ErrorAction Stop
                 }
                 catch
                 {
                     Write-Warning "Something went wrong. $($_.Exception.Message)"
                 }
-                Write-Output $applicant
+                Write-Output $pupil
             }
         }
         else
         {
-            $query = $null
+            # Todo: add Page/Pagesize/Filter here:
+            $QueryParams["Query"] = $null
+
             try
             {
-                $response = Invoke-PSiSAMSAPIRequest -Resource $resource -Method $method -Query $query
+                $response = Invoke-PSiSAMSAPIRequest @QueryParams -ErrorAction Stop
             }
             catch
             {
                 Write-Warning "API request failed. $($_.Exception.Message)"
             }
 
+            # Multiple pupils:
             if($response.students)
             {
                 Write-Output $response.students
             }
+            # Single pupil:
             else
             {
                 Write-Output $response
