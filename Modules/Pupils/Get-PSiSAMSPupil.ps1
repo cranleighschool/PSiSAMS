@@ -51,9 +51,9 @@
                 Write-Warning "API request failed. $($_.Exception.Message)"
             }
 
-            if($response.applicants)
+            if($response.students)
             {
-                Write-Output $response.applicants
+                Write-Output $response.students
             }
             else
             {

@@ -30,7 +30,7 @@
                 $r="$resource/$ID"
                 try
                 {
-                    $applicant = Invoke-iSAMSAPIRequest -Resource $r -Method $method -ErrorAction Stop
+                    $applicant = Invoke-PSiSAMSAPIRequest -Resource $r -Method $method -ErrorAction Stop
                 }
                 catch
                 {
@@ -52,7 +52,7 @@
             }
             try
             {
-                $response = Invoke-iSAMSAPIRequest -Resource $resource -Method $method -Query $query
+                $response = Invoke-PSiSAMSAPIRequest -Resource $resource -Method $method -Query $query
             }
             catch
             {

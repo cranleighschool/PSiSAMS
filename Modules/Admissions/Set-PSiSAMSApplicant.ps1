@@ -40,7 +40,7 @@
         # Retrieve applicant details from iSAMS. If nothing is retrieved, issue a warning and exit.
         try
         {
-            $pupil = Get-iSAMSApplicant -SchoolID $SchoolID -Verbose:$false -ErrorAction Stop
+            $pupil = Get-PSiSAMSApplicant -SchoolID $SchoolID -Verbose:$false -ErrorAction Stop
         }
         catch
         {
@@ -87,7 +87,7 @@
             if ($PSCmdlet.ShouldProcess($target))
             {
                 try {
-                    $pupil = Invoke-iSAMSAPIRequest -Resource $resource -Method $method -Body $body -ErrorAction Stop
+                    $pupil = Invoke-PSiSAMSAPIRequest -Resource $resource -Method $method -Body $body -ErrorAction Stop
                     Write-Output "Success! Updated [$($delta -join ",")] for $target"
                 } catch {
                     Write-Warning "Failed to update applicant data for $target. $($_.Exception.Message)"

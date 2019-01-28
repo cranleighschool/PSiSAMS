@@ -3,13 +3,23 @@
 
     [CmdletBinding()]
 
-    # Bearer token storage, in the module root folder:
-    $secret_path = Join-Path -Path $MyInvocation.PSScriptRoot -ChildPath "client_secret.xml"
+    # Bearer token storage, in the user's local appdata folder:
+    $psisams_appdata = Join-Path -Path $env:LOCALAPPDATA -ChildPath "PSiSAMS"
+    $secret_path = Join-Path -Path $psisams_appdata -ChildPath "client_secret.xml"
     Write-Verbose "Client secret path: $secret_path"
-    $isams_credentials = Import-Clixml $secret_path
+    try
+    {
+        $isams_credentials = Import-Clixml $secret_path
+    }
+    catch
+    {
+        if(-not (Test-Path $psisams_appdata)) {New-Item -ItemType Directory -Path $psisams_appdata -Force}
+        Get-Credential (Get-Credential) | Export-Clixml -Path $secret_path
+        $isams_credentials = Import-Clixml $secret_path
+    }
 
     # This is where the latest bearer token will be stored, along with timestamp to check expiry:
-    $auth_path = Join-Path -Path $MyInvocation.PSScriptRoot -ChildPath "auth.xml"
+    $auth_path = Join-Path -Path $psisams_appdata -ChildPath "auth.xml"
     Write-Verbose "XML Path: $auth_path"
 
     # First, check if we have a bearer token stored locally:
@@ -21,7 +31,7 @@
     }
     catch
     {
-        Write-Warning "No valid authentication object was imported. A new bearer token will be requested."
+        Write-Verbose "No valid authentication object was imported. A new bearer token will be requested."
         $expires_in = 0
     }
 
@@ -50,6 +60,7 @@
         catch
         {
             Write-Error "Failed to get bearer token. $($_.Exception.Message)"
+            Remove-Item $secret_path,$auth_path
             Return
         }
         $expires_in = $auth.expires_in

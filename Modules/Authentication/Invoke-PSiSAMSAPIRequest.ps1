@@ -51,7 +51,7 @@
         Method = $Method
         Headers = @{
             "Content-Type"='application/json'
-            "Authorization"="Bearer $(Get-iSAMSAPIToken)"
+            "Authorization"="Bearer $(Get-PSiSAMSAPIToken)"
         }
         Body = switch($Method){
             GET  {@{}}
